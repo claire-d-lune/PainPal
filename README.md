@@ -1,2 +1,2 @@
-# Megrim-Aura
+# PainPal
 A migraine tracker app. 
