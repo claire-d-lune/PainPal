@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import EventRecords from './components/EventRecords'
 
 export default function MainPage() {
-    const [events, setEvents] = useState([])
+    const [events, setEvents] = useState([])// <- most likely passed in as props from App.tsx
     const [weatherData, setWeatherData] = useState([])
-    const [errors, setErrors] = useState([])
+    const [errors, setErrors] = useState([])// <- also most likely passed in as a prop, if needed
 
     //useEffect to fetch user eventRecords from local API
+    //most likely this will live in App.tsx and user data will get passed as props to this page after login
     useEffect(() => {
         fetch('/API')
             .then((res) => {
@@ -50,30 +51,47 @@ export default function MainPage() {
     //DOES NOT ACCOUNT FOR INCOMPLETE ENTRIES
     const sortedEvents = (events.slice(0).sort((a, b) => a.date.localeCompare(b.date))).reverse()
 
-    //filter for eventRecords by DATE, SEVERITY, WEATHER CONDITIONS, INCOMPLETE
-
+    //filter for eventRecords by DATE, SEVERITY, WEATHER CONDITIONS
+    //this could be trash...😅
+    const eventFilteringFunc = (currentEvent) => {
+        const filteredEvents = events.filter((event) => {
+            return event.date === currentEvent;
+        })
+        setEvents(filteredEvents)
+    }
 
     //mapping function to create event record cards
     const eventRecords = sortedEvents.map(event => {
         <EventRecords
             key={event.id}
+            event={event}
         />
     })
 
     return (
         <>
-            <button>{"add a new migraine event : leads to migraine form"}</button>
-            <button>{"I AM HAVING A MIGRAINE RIGHT NOW : to submit a `blank` event record with date & time prefilled"}</button>
-            <div>
-                {"weather forecast display"}
-            </div>
+            <div className="dashboard-display-container">
+                <button>{"add a new migraine event -> leads to migraine form"}</button>
+                <button>{"I AM HAVING A MIGRAINE RIGHT NOW -> submits a `blank` event record w/date & time prefilled"}</button>
 
+                <div>
+                    {weatherData}
+                </div>
+            </div>
             {/* Do list items work for rendering card components? I feel like there's a cleaner solution but I could be wrong */}
-            <ul>
-                <li>
-                    {eventRecords}
-                </li>
-            </ul>
+            <div className="event-record-container">
+                <button>
+                    {<DateFilterButton filter={eventFilteringFunc} />}
+                </button>
+                <button>
+                    {<SeverityFilterButton filter={eventFilteringFunc} />}
+                </button>
+                <button>
+                    {<WeatherFilterButton filter={eventFilteringFunc} />}
+                </button>
+
+                {eventRecords}
+            </div>
         </>
     )
 }
