@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import EventRecords from './components/EventRecords'
 
 export default function MainPage() {
     const [events, setEvents] = useState([])
@@ -13,16 +14,26 @@ export default function MainPage() {
                     res.json()
                         .then((data) => {
                             setEvents(data)
-                            fetchWeatherData()
+                            fetchWeatherData() // <- Callback function for weather data if we don't want 2 useEffects
                         })
                 }
             })
     }, [])
-    // Do we want to try two useEffect's to fetch weather data from API?
-    // OR just a function that runs automatically when the useEffect is called...
-    // what are the pros/cons of either case?
+    // Do we want to try TWO useEffect's to fetch weather data from API?
+    useEffect(() => {
+        fetch('/WEATHER_API')
+            .then((res) => {
+                if (res.ok) {
+                    res.json()
+                        .then((data) => {
+                            setWeatherData(data)
+                        })
+                }
+            })
+    })
+    // OR a function that runs automatically when the first useEffect is called, like above?
     const fetchWeatherData = () => {
-        fetch('WEATHER API')
+        fetch('/WEATHER_API')
             .then(res => {
                 if (res.ok) {
                     res.json()
@@ -33,16 +44,18 @@ export default function MainPage() {
                 }
             })
     }
+    // what are the pros/cons of 2 useEffect's vs. using a callback function?
 
     //sorting algorithm by event date : NEWEST -> OLDEST
     //DOES NOT ACCOUNT FOR INCOMPLETE ENTRIES
     const sortedEvents = (events.slice(0).sort((a, b) => a.date.localeCompare(b.date))).reverse()
 
-    //filter for eventRecords by DATE, SEVERITY(color), WEATHER, INCOMPLETE
+    //filter for eventRecords by DATE, SEVERITY, WEATHER CONDITIONS, INCOMPLETE
 
 
+    //mapping function to create event record cards
     const eventRecords = sortedEvents.map(event => {
-        <Event
+        <EventRecords
             key={event.id}
         />
     })
@@ -55,7 +68,7 @@ export default function MainPage() {
                 {"weather forecast display"}
             </div>
 
-            {/* How should card components appear? Do list items work? */}
+            {/* Do list items work for rendering card components? I feel like there's a cleaner solution but I could be wrong */}
             <ul>
                 <li>
                     {eventRecords}
