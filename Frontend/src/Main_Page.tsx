@@ -47,11 +47,8 @@ export default function MainPage() {
     }
     // what are the pros/cons of 2 useEffect's vs. using a callback function?
 
-    //sorting algorithm by event date : NEWEST -> OLDEST
-    //DOES NOT ACCOUNT FOR INCOMPLETE ENTRIES
-    const sortedEvents = (events.slice(0).sort((a, b) => a.date.localeCompare(b.date))).reverse()
-
     //filter for eventRecords by DATE, SEVERITY, WEATHER CONDITIONS
+    //SOURCE: https://www.freecodecamp.org/news/how-to-make-a-filter-component-in-react/
     //this could be trash...😅
     const eventFilteringFunc = (currentEvent) => {
         const filteredEvents = events.filter((event) => {
@@ -60,7 +57,11 @@ export default function MainPage() {
         setEvents(filteredEvents)
     }
 
-    //mapping function to create event record cards
+    //sorting algorithm by event date : NEWEST -> OLDEST
+    //DOES NOT ACCOUNT FOR INCOMPLETE ENTRIES
+    const sortedEvents = (events.slice(0).sort((a, b) => a.date.localeCompare(b.date))).reverse()
+
+    //mapping function to create eventRecord cards
     const eventRecords = sortedEvents.map(event => {
         <EventRecords
             key={event.id}
