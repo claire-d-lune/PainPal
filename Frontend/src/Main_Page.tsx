@@ -34,19 +34,33 @@ export default function MainPage() {
             })
     }
 
+    //sorting algorithm by event date : NEWEST -> OLDEST
+    //DOES NOT ACCOUNT FOR INCOMPLETE ENTRIES
+    const sortedEvents = (events.slice(0).sort((a, b) => a.date.localeCompare(b.date))).reverse()
+
     //filter for eventRecords by DATE, SEVERITY(color), WEATHER, INCOMPLETE
 
-    const eventRecords = events.map(event => {
+
+    const eventRecords = sortedEvents.map(event => {
         <Event
             key={event.id}
         />
     })
 
     return (
-        <ul>
-            <li>
-                {eventRecords}
-            </li>
-        </ul>
+        <>
+            <button>{"add a new migraine event : leads to migraine form"}</button>
+            <button>{"I AM HAVING A MIGRAINE RIGHT NOW : to submit a `blank` event record with date & time prefilled"}</button>
+            <div>
+                {"weather forecast display"}
+            </div>
+
+            {/* How should card components appear? Do list items work? */}
+            <ul>
+                <li>
+                    {eventRecords}
+                </li>
+            </ul>
+        </>
     )
 }
